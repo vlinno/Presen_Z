@@ -26,13 +26,7 @@ interface BidangStat {
   totalStudents: number
   hadirCount: number
   percentage: number
-}
-
-interface LeaderboardStudent {
-  id: string
-  nama_lengkap: string
-  nama_kampus: string
-  totalHadir: number
+  hadirNames: string[]
 }
 
 export default function AdminDashboardPage() {
@@ -43,7 +37,6 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [focusedLatLng, setFocusedLatLng] = useState<[number, number] | null>(null)
   const [bidangStats, setBidangStats] = useState<BidangStat[]>([])
-  const [leaderboard, setLeaderboard] = useState<LeaderboardStudent[]>([])
 
   // Announcements & Trend statistics states
   const [weeklyData, setWeeklyData] = useState<{ dayName: string; dateStr: string; presentRate: number }[]>([])
@@ -171,7 +164,8 @@ export default function AdminDashboardPage() {
           })
           
           const totalInBidang = bidangStudents.length
-          const hadirInBidang = bidangStudents.filter((s) => s.todayStatus === 'hadir').length
+          const hadirStudents = bidangStudents.filter((s) => s.todayStatus === 'hadir')
+          const hadirInBidang = hadirStudents.length
           const pct = totalInBidang > 0 ? Math.round((hadirInBidang / totalInBidang) * 100) : 0
           
           return {
@@ -179,37 +173,11 @@ export default function AdminDashboardPage() {
             nama_bidang: bidang.nama_bidang,
             totalStudents: totalInBidang,
             hadirCount: hadirInBidang,
-            percentage: pct
+            percentage: pct,
+            hadirNames: hadirStudents.map((s) => s.nama_lengkap)
           }
         }).filter(b => b.totalStudents > 0) // Hanya tampilkan bidang yang punya mahasiswa magang
         setBidangStats(statsByBidang)
-      }
-
-      // 2. Hitung Leaderboard Mahasiswa (Paling Disiplin Bulan Ini)
-      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]
-      const { data: monthAttendance } = await supabase
-        .from('absensi')
-        .select('user_id, keterangan')
-        .gte('tanggal', startOfMonth)
-        .eq('keterangan', 'hadir')
-
-      if (monthAttendance) {
-        const checkinCountMap = new Map<string, number>()
-        monthAttendance.forEach((rec) => {
-          checkinCountMap.set(rec.user_id, (checkinCountMap.get(rec.user_id) || 0) + 1)
-        })
-
-        const rankedStudents = profiles
-          .map((p) => ({
-            id: p.id,
-            nama_lengkap: p.nama_lengkap,
-            nama_kampus: p.nama_kampus,
-            totalHadir: checkinCountMap.get(p.id) || 0
-          }))
-          .sort((a, b) => b.totalHadir - a.totalHadir)
-          .slice(0, 3)
-
-        setLeaderboard(rankedStudents)
       }
 
       // Fetch announcements
@@ -501,10 +469,10 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Visual Analytics Row 2 - Bidang Stats & Leaderboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-slide-up">
-        {/* Bidang Attendance Stats - 2 columns */}
-        <div className="lg:col-span-2 glass-card p-5 flex flex-col justify-between">
+      {/* Visual Analytics Row 2 - Bidang Stats */}
+      <div className="mb-8 animate-slide-up">
+        {/* Bidang Attendance Stats - Full width */}
+        <div className="glass-card p-5 flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-neutral-800 mb-1">📊 Kehadiran per Bidang (Hari Ini)</h3>
             <p className="text-xs text-neutral-400 mb-4">Persentase kehadiran mahasiswa magang aktif hari ini di masing-masing bidang</p>
@@ -515,7 +483,7 @@ export default function AdminDashboardPage() {
               <p className="text-xs text-neutral-400 py-6 text-center">Belum ada mahasiswa magang terdaftar di bidang mana pun saat ini.</p>
             ) : (
               bidangStats.map((bidang) => (
-                <div key={bidang.id} className="space-y-1.5">
+                <div key={bidang.id} className="space-y-1.5 mb-2">
                   <div className="flex items-center justify-between text-xs font-semibold text-neutral-600">
                     <span className="truncate pr-4">{bidang.nama_bidang}</span>
                     <span className="font-bold text-primary-700 flex-shrink-0">{bidang.percentage}% ({bidang.hadirCount}/{bidang.totalStudents} Mhs)</span>
@@ -532,42 +500,11 @@ export default function AdminDashboardPage() {
                       style={{ width: `${bidang.percentage}%` }}
                     />
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Leaderboard Mahasiswa - 1 column */}
-        <div className="lg:col-span-1 glass-card p-5 flex flex-col justify-between min-h-[240px]">
-          <div>
-            <h3 className="text-sm font-bold text-neutral-800 mb-1">🏆 Mahasiswa Teraktif (Bulan Ini)</h3>
-            <p className="text-xs text-neutral-400 mb-4">Top 3 mahasiswa dengan jumlah check-in hadir terbanyak</p>
-          </div>
-          
-          <div className="flex-1 flex flex-col justify-center gap-3">
-            {leaderboard.length === 0 ? (
-              <p className="text-xs text-neutral-400 py-6 text-center">Belum ada data kehadiran bulan ini.</p>
-            ) : (
-              leaderboard.map((student, idx) => (
-                <div key={student.id} className="flex items-center gap-3 bg-neutral-50/50 p-2.5 rounded-xl border border-neutral-100/50">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-extrabold flex-shrink-0 ${
-                    idx === 0 
-                      ? 'bg-amber-100 text-amber-700 ring-2 ring-amber-50' 
-                      : idx === 1 
-                      ? 'bg-slate-100 text-slate-700 ring-2 ring-slate-50' 
-                      : 'bg-orange-100 text-orange-700 ring-2 ring-orange-50'
-                  }`}>
-                    {idx + 1}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-neutral-800 truncate">{student.nama_lengkap}</p>
-                    <p className="text-[10px] text-neutral-400 truncate">{student.nama_kampus}</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <span className="text-xs font-extrabold text-primary-700">{student.totalHadir} Hari</span>
-                    <p className="text-[8px] text-neutral-400 font-medium">Hadir</p>
-                  </div>
+                  {bidang.hadirNames.length > 0 && (
+                    <p className="text-[10px] text-neutral-500 leading-tight italic pt-0.5">
+                      <span className="font-medium text-neutral-600 not-italic">Hadir:</span> {bidang.hadirNames.join(', ')}
+                    </p>
+                  )}
                 </div>
               ))
             )}

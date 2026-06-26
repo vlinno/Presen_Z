@@ -10,6 +10,8 @@ export interface OfficeSettings {
   radius_meter: number
   jam_masuk: string
   jam_pulang: string
+  /** Jam pulang khusus hari Jumat (default: '11:00') */
+  jam_pulang_jumat: string
 }
 
 const FALLBACK_SETTINGS: OfficeSettings = {
@@ -18,7 +20,8 @@ const FALLBACK_SETTINGS: OfficeSettings = {
   longitude: 114.588700,
   radius_meter: 50,
   jam_masuk: '08:00',
-  jam_pulang: '16:00',
+  jam_pulang: '16:30',
+  jam_pulang_jumat: '11:00',
 }
 
 /**
@@ -29,7 +32,7 @@ export async function getOfficeSettings(): Promise<OfficeSettings> {
     const supabase = await createClient()
     const { data, error } = await supabase
       .from('pengaturan_kantor')
-      .select('nama, latitude, longitude, radius_meter, jam_masuk, jam_pulang')
+      .select('nama, latitude, longitude, radius_meter, jam_masuk, jam_pulang, jam_pulang_jumat')
       .eq('id', 1)
       .single()
 
@@ -44,8 +47,9 @@ export async function getOfficeSettings(): Promise<OfficeSettings> {
       latitude: data.latitude,
       longitude: data.longitude,
       radius_meter: data.radius_meter,
-      jam_masuk: data.jam_masuk ? data.jam_masuk.substring(0, 5) : '08:00',
-      jam_pulang: data.jam_pulang ? data.jam_pulang.substring(0, 5) : '16:00',
+      jam_masuk:         data.jam_masuk         ? data.jam_masuk.substring(0, 5)         : '08:00',
+      jam_pulang:        data.jam_pulang         ? data.jam_pulang.substring(0, 5)         : '16:30',
+      jam_pulang_jumat:  data.jam_pulang_jumat   ? data.jam_pulang_jumat.substring(0, 5)  : '11:00',
     }
   } catch (err) {
     console.error('Error fetching office settings:', err)
@@ -77,16 +81,20 @@ export async function updateOfficeSettings(formData: FormData) {
       return { error: 'Akses ditolak. Anda bukan administrator.' }
     }
 
-    const nama = formData.get('nama') as string
-    const latitude = parseFloat(formData.get('latitude') as string)
-    const longitude = parseFloat(formData.get('longitude') as string)
-    const radius_meter = parseInt(formData.get('radius_meter') as string)
-    const jam_masuk = formData.get('jam_masuk') as string
-    const jam_pulang = formData.get('jam_pulang') as string
+    const nama            = formData.get('nama')            as string
+    const latitude        = parseFloat(formData.get('latitude')     as string)
+    const longitude       = parseFloat(formData.get('longitude')    as string)
+    const radius_meter    = parseInt(formData.get('radius_meter')   as string)
+    const jam_masuk       = formData.get('jam_masuk')       as string
+    const jam_pulang      = formData.get('jam_pulang')      as string
+    const jam_pulang_jumat = formData.get('jam_pulang_jumat') as string
 
     if (!nama || isNaN(latitude) || isNaN(longitude) || isNaN(radius_meter) || !jam_masuk || !jam_pulang) {
       return { error: 'Semua input pengaturan wajib diisi dengan benar!' }
     }
+
+    const toDbTime = (t: string) =>
+      t.includes(':') && t.split(':').length === 2 ? `${t}:00` : t
 
     // 3. Update database
     const { error } = await supabase
@@ -96,8 +104,9 @@ export async function updateOfficeSettings(formData: FormData) {
         latitude,
         longitude,
         radius_meter,
-        jam_masuk: jam_masuk.includes(':') && jam_masuk.split(':').length === 2 ? `${jam_masuk}:00` : jam_masuk,
-        jam_pulang: jam_pulang.includes(':') && jam_pulang.split(':').length === 2 ? `${jam_pulang}:00` : jam_pulang,
+        jam_masuk:        toDbTime(jam_masuk),
+        jam_pulang:       toDbTime(jam_pulang),
+        jam_pulang_jumat: toDbTime(jam_pulang_jumat || '11:00'),
       })
       .eq('id', 1)
 

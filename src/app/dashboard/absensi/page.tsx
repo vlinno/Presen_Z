@@ -84,7 +84,8 @@ export default function AbsensiPage() {
     longitude: OFFICE_LOCATION.longitude,
     radius_meter: OFFICE_LOCATION.radiusMeters,
     jam_masuk: '08:00',
-    jam_pulang: '16:00',
+    jam_pulang: '16:30',
+    jam_pulang_jumat: '11:00',
   })
   const [gpsData, setGpsData] = useState<{
     latitude: number

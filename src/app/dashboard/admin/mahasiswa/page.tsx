@@ -662,23 +662,21 @@ export default function MahasiswaPage() {
       const footerStart = lastRow + 5
       
       const sigColIndex = 4 + daysInMonth - 2
-      const sigColHeader = getColLetter(sigColIndex + 1)
+      const startMergeLetter = getColLetter(sigColIndex - 4 + 1)
+      const endMergeLetter = getColLetter(sigColIndex + 3 + 1)
 
-      worksheet.getCell(`${sigColHeader}${footerStart}`).value = 'PAMONG'
-      worksheet.getCell(`${sigColHeader}${footerStart}`).font = { bold: true, size: 11 }
-      worksheet.getCell(`${sigColHeader}${footerStart}`).alignment = { horizontal: 'center' }
+      const mergeAndSet = (rowOff: number, value: string, font: any) => {
+        worksheet.mergeCells(`${startMergeLetter}${footerStart + rowOff}:${endMergeLetter}${footerStart + rowOff}`)
+        const cell = worksheet.getCell(`${startMergeLetter}${footerStart + rowOff}`)
+        cell.value = value
+        cell.font = font
+        cell.alignment = { horizontal: 'center' }
+      }
 
-      worksheet.getCell(`${sigColHeader}${footerStart + 4}`).value = pamongNama
-      worksheet.getCell(`${sigColHeader}${footerStart + 4}`).font = { bold: true, underline: true, size: 11 }
-      worksheet.getCell(`${sigColHeader}${footerStart + 4}`).alignment = { horizontal: 'center' }
-
-      worksheet.getCell(`${sigColHeader}${footerStart + 5}`).value = pamongPangkat
-      worksheet.getCell(`${sigColHeader}${footerStart + 5}`).font = { size: 11 }
-      worksheet.getCell(`${sigColHeader}${footerStart + 5}`).alignment = { horizontal: 'center' }
-
-      worksheet.getCell(`${sigColHeader}${footerStart + 6}`).value = pamongNip.startsWith('NIP:') ? pamongNip : `NIP: ${pamongNip}`
-      worksheet.getCell(`${sigColHeader}${footerStart + 6}`).font = { size: 11 }
-      worksheet.getCell(`${sigColHeader}${footerStart + 6}`).alignment = { horizontal: 'center' }
+      mergeAndSet(0, 'PAMONG', { bold: true, size: 11 })
+      mergeAndSet(4, pamongNama, { bold: true, underline: true, size: 11 })
+      mergeAndSet(5, pamongPangkat, { size: 11 })
+      mergeAndSet(6, pamongNip.startsWith('NIP:') ? pamongNip : `NIP: ${pamongNip}`, { size: 11 })
 
       const buffer = await workbook.xlsx.writeBuffer()
       const blob = new Blob([buffer], {

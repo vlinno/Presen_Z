@@ -21,8 +21,8 @@ export default function LoginPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-neutral-900 mb-1">Selamat Datang</h1>
-      <p className="text-sm text-neutral-500 mb-6">Masuk ke akun PresenZ Anda</p>
+      <h1 className="text-2xl font-bold mb-1" style={{ color: '#111827' }}>Selamat Datang</h1>
+      <p className="text-sm mb-6" style={{ color: '#6b7280' }}>Masuk ke akun PresenZ Anda</p>
 
       {error && (
         <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm animate-fade-in">

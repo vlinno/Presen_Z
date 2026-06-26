@@ -53,6 +53,7 @@ export default function OfficeSettingsForm({ initialSettings, initialHolidays }:
     formData.set('radius_meter', String(settings.radius_meter))
     formData.set('jam_masuk', settings.jam_masuk)
     formData.set('jam_pulang', settings.jam_pulang)
+    formData.set('jam_pulang_jumat', settings.jam_pulang_jumat ?? '11:00')
 
     const result = await updateOfficeSettings(formData)
 
@@ -222,7 +223,7 @@ export default function OfficeSettingsForm({ initialSettings, initialHolidays }:
                 </div>
                 <div>
                   <label htmlFor="jam_pulang" className="block text-xs font-semibold text-neutral-500 uppercase mb-1.5">
-                    Jam Pulang Standar (WITA)
+                    Jam Pulang Senin–Kamis (WITA)
                   </label>
                   <input
                     id="jam_pulang"
@@ -232,6 +233,20 @@ export default function OfficeSettingsForm({ initialSettings, initialHolidays }:
                     onChange={(e) => setSettings((prev) => ({ ...prev, jam_pulang: e.target.value }))}
                     className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
+                </div>
+                <div>
+                  <label htmlFor="jam_pulang_jumat" className="block text-xs font-semibold text-neutral-500 uppercase mb-1.5">
+                    Jam Pulang Jumat (WITA)
+                  </label>
+                  <input
+                    id="jam_pulang_jumat"
+                    type="time"
+                    required
+                    value={settings.jam_pulang_jumat ?? '11:00'}
+                    onChange={(e) => setSettings((prev) => ({ ...prev, jam_pulang_jumat: e.target.value }))}
+                    className="w-full px-4 py-2.5 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  />
+                  <p className="text-[11px] text-neutral-400 mt-1">Hari Jumat jam kerja lebih pendek (biasanya 11:00 WITA)</p>
                 </div>
               </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { logout } from '@/app/actions/auth'
@@ -46,6 +47,15 @@ const studentNavItems = [
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+      </svg>
+    ),
+  },
+  {
+    href: '/dashboard/games',
+    label: 'Mini Games',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
   },
@@ -111,32 +121,40 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
   }
 
   return (
-    <div className="min-h-screen bg-[#fafaf8] flex">
+    <div className="min-h-screen flex bg-slate-50">
+
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* ══════════════════════════════════
+          SIDEBAR — Light, clean
+          ══════════════════════════════════ */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-neutral-200 flex flex-col transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        style={{ borderRight: '1px solid #e2e8f0' }}
       >
         {/* Logo */}
-        <div className="p-6 border-b border-neutral-100">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-md">
-              <span className="text-white font-bold text-lg">P</span>
-            </div>
+        <div className="px-5 py-5" style={{ borderBottom: '1px solid #f1f5f9' }}>
+          <div className="flex items-center gap-2.5">
+            <Image
+              src="/logo-kesbangpol.png"
+              alt="Logo Kesbangpol"
+              width={36}
+              height={36}
+              className="object-contain"
+            />
             <div>
-              <span className="text-lg font-bold text-primary-800 tracking-tight">
-                Presen<span className="text-primary-500">Z</span>
+              <span className="text-base font-bold tracking-tight text-gray-900">
+                Presen<span style={{ color: '#4f46e5' }}>Z</span>
               </span>
-              <p className="text-[11px] text-neutral-400 -mt-0.5">
+              <p className="text-[10px] font-medium text-slate-400 -mt-0.5">
                 {role === 'admin' ? 'Panel Admin' : 'Portal Magang'}
               </p>
             </div>
@@ -144,46 +162,57 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
-                isActive(item.href)
-                  ? 'bg-primary-50 text-primary-700 shadow-sm'
-                  : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-800'
-              }`}
-            >
-              <span className={isActive(item.href) ? 'text-primary-600' : 'text-neutral-400'}>
-                {item.icon}
-              </span>
-              {item.label}
-            </Link>
-          ))}
+        <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+          <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Menu
+          </p>
+          {navItems.map((item) => {
+            const active = isActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
+                style={{
+                  background: active ? '#eef2ff' : 'transparent',
+                  color: active ? '#4f46e5' : '#475569',
+                }}
+              >
+                <span style={{ color: active ? '#4f46e5' : '#94a3b8' }}>
+                  {item.icon}
+                </span>
+                {item.label}
+                {active && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                )}
+              </Link>
+            )
+          })}
         </nav>
 
-        {/* User info */}
-        <div className="p-4 border-t border-neutral-100">
-          <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-9 h-9 rounded-full bg-gradient-primary flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-semibold text-sm">
-                {namaLengkap.charAt(0).toUpperCase()}
-              </span>
+        {/* User info + Logout */}
+        <div className="px-3 py-4" style={{ borderTop: '1px solid #e2e8f0' }}>
+          <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 bg-slate-50">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #4f46e5, #06b6d4)' }}>
+              {namaLengkap.charAt(0).toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-neutral-800 truncate">{namaLengkap}</p>
-              <p className="text-xs text-neutral-400 truncate">{namaKampus || (role === 'admin' ? 'Administrator' : '')}</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{namaLengkap}</p>
+              <p className="text-[10px] text-slate-400 truncate">
+                {namaKampus || (role === 'admin' ? 'Administrator' : '')}
+              </p>
             </div>
           </div>
           <form action={logout}>
             <button
               type="submit"
-              className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-200"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all duration-200"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
               Keluar
             </button>
@@ -191,20 +220,31 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
         </div>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-72">
-        {/* Top bar (mobile) */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white/80 backdrop-blur-lg border-b border-neutral-200 px-4 py-3 flex items-center gap-3">
+      {/* ══════════════════════════════════
+          MAIN CONTENT
+          ══════════════════════════════════ */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
+
+        {/* Top bar — mobile */}
+        <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white"
+          style={{ borderBottom: '1px solid #e2e8f0' }}>
           <button
+            id="sidebar-toggle"
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-neutral-100 text-neutral-600 transition-colors"
+            className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-lg font-bold text-primary-800 tracking-tight">
-            Presen<span className="text-primary-500">Z</span>
+
+          <span className="text-base font-bold tracking-tight text-gray-900">
+            Presen<span style={{ color: '#4f46e5' }}>Z</span>
+          </span>
+
+          <span className="ml-auto text-[10px] font-bold px-2.5 py-1 rounded-full text-white"
+            style={{ background: 'linear-gradient(135deg, #4f46e5, #06b6d4)' }}>
+            {role === 'admin' ? 'Admin' : 'Magang'}
           </span>
         </header>
 
@@ -212,6 +252,7 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
         <main className="flex-1 p-4 md:p-6 lg:p-8">
           {children}
         </main>
+
       </div>
     </div>
   )
