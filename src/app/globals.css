@@ -348,4 +348,21 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
+/* Normalize date input appearance across all browsers (iOS Safari fix) */
+input[type="date"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  line-height: normal;
+}
+
+/* Remove the inner spin button styling from date inputs on webkit */
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
 
