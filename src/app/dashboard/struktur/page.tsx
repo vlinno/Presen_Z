@@ -1777,91 +1777,107 @@ export default function StrukturPage() {
       {/* DETAIL DIALOG MODAL */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-fade-in"
           onClick={() => setIsModalOpen(false)}
         >
+          {/* Bottom sheet on mobile, centered modal on desktop */}
           <div
-            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto flex flex-col animate-slide-in-up"
-            onClick={(e) => e.stopPropagation()}
+            className="absolute bottom-0 left-0 right-0 md:relative md:flex md:items-center md:justify-center md:h-full md:p-4"
+            onClick={() => setIsModalOpen(false)}
           >
-            {/* Modal Header */}
-            <div className="p-6 border-b border-neutral-100 flex items-start justify-between bg-neutral-50/50">
-              <div>
-                <span className="text-[10px] font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full uppercase tracking-wider">
-                  Detail Organisasi
-                </span>
-                <h2 className="text-lg font-bold text-neutral-900 mt-2.5 leading-snug">{modalTitle}</h2>
-                <p className="text-sm font-semibold text-neutral-700 mt-1">{modalSubtitle}</p>
-                {modalNip !== '-' && modalNip !== '' && (
-                  <p className="text-xs text-neutral-400 mt-0.5">
-                    {modalNip.startsWith('NIP') ? modalNip : `NIP. ${modalNip}`} &bull; {modalGolongan}
-                  </p>
-                )}
+            <div
+              className="bg-white w-full rounded-t-3xl md:rounded-2xl shadow-2xl md:max-w-lg md:w-full flex flex-col animate-slide-in-up"
+              style={{ maxHeight: '90vh' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Drag Handle — mobile only */}
+              <div className="flex justify-center pt-3 pb-1 md:hidden">
+                <div className="w-10 h-1.5 rounded-full bg-neutral-300" />
               </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-neutral-200 text-neutral-400 hover:text-neutral-600 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
 
-            {/* Description */}
-            <div className="p-6 border-b border-neutral-100">
-              <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
-                Tugas Pokok & Fungsi
-              </h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                {modalDescription}
-              </p>
-            </div>
-
-            {/* Staff List */}
-            <div className="p-6 overflow-y-auto flex-1">
-              <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-3">
-                Daftar Staf / Anggota ({modalStaff.length})
-              </h3>
-              {modalStaff.length > 0 ? (
-                <div className="space-y-3.5">
-                  {modalStaff.map((staff) => (
-                    <div
-                      key={staff.id}
-                      className="flex items-center gap-3.5 p-3 rounded-xl bg-neutral-50 border border-neutral-100"
-                    >
-                      <div className="w-9 h-9 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-700 font-bold text-sm">
-                        {staff.nama_staf.charAt(0)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-bold text-neutral-800 truncate">{staff.nama_staf}</p>
-                        <p className="text-[10px] text-neutral-500 mt-0.5 leading-snug">{staff.jabatan}</p>
-                        {staff.nip_staf !== '-' && staff.nip_staf !== '' && (
-                          <p className="text-[9px] text-neutral-400 mt-0.5">
-                            {staff.nip_staf.startsWith('NIP') ? staff.nip_staf : `NIP. ${staff.nip_staf}`}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              {/* Modal Header */}
+              <div className="px-6 pt-4 pb-4 border-b border-neutral-100 flex items-start justify-between">
+                <div className="flex-1 min-w-0 pr-3">
+                  <span className="text-[10px] font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Detail Organisasi
+                  </span>
+                  <h2 className="text-base font-bold text-neutral-900 mt-2 leading-snug">{modalTitle}</h2>
+                  <p className="text-sm font-semibold text-neutral-700 mt-1">{modalSubtitle}</p>
+                  {modalNip !== '-' && modalNip !== '' && (
+                    <p className="text-xs text-neutral-400 mt-0.5">
+                      {modalNip.startsWith('NIP') ? modalNip : `NIP. ${modalNip}`} &bull; {modalGolongan}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-xs text-neutral-400 italic">Tidak ada staf terdaftar di bawah unit kerja ini.</p>
-              )}
-            </div>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-1.5 rounded-lg hover:bg-neutral-200 text-neutral-400 hover:text-neutral-600 transition-colors flex-shrink-0"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-            {/* Footer */}
-            <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/50 flex justify-end">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-neutral-200 text-neutral-800 text-xs font-semibold hover:bg-neutral-300 transition-colors"
-              >
-                Tutup
-              </button>
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto flex-1" style={{ WebkitOverflowScrolling: 'touch' }}>
+                {/* Description */}
+                <div className="px-6 py-4 border-b border-neutral-100">
+                  <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-2">
+                    Tugas Pokok &amp; Fungsi
+                  </h3>
+                  <p className="text-xs text-neutral-600 leading-relaxed">
+                    {modalDescription}
+                  </p>
+                </div>
+
+                {/* Staff List */}
+                <div className="px-6 py-4">
+                  <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-3">
+                    Daftar Staf / Anggota ({modalStaff.length})
+                  </h3>
+                  {modalStaff.length > 0 ? (
+                    <div className="space-y-3.5">
+                      {modalStaff.map((staff) => (
+                        <div
+                          key={staff.id}
+                          className="flex items-center gap-3.5 p-3 rounded-xl bg-neutral-50 border border-neutral-100"
+                        >
+                          <div className="w-9 h-9 rounded-xl bg-primary-100 flex items-center justify-center flex-shrink-0 text-primary-700 font-bold text-sm">
+                            {staff.nama_staf.charAt(0)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-neutral-800 truncate">{staff.nama_staf}</p>
+                            <p className="text-[10px] text-neutral-500 mt-0.5 leading-snug">{staff.jabatan}</p>
+                            {staff.nip_staf !== '-' && staff.nip_staf !== '' && (
+                              <p className="text-[9px] text-neutral-400 mt-0.5">
+                                {staff.nip_staf.startsWith('NIP') ? staff.nip_staf : `NIP. ${staff.nip_staf}`}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-neutral-400 italic">Tidak ada staf terdaftar di bawah unit kerja ini.</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Footer — with safe area for browser nav bar */}
+              <div className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/50 flex justify-end" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-full md:w-auto px-4 py-2.5 rounded-xl bg-neutral-200 text-neutral-800 text-xs font-semibold hover:bg-neutral-300 transition-colors"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
 
       {/* EDIT MODAL DIALOG */}
       {editType && (
