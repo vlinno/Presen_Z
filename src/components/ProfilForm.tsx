@@ -72,7 +72,7 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto w-full overflow-hidden">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-neutral-800">Profil Saya</h1>
@@ -83,7 +83,7 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
         </p>
       </div>
 
-      <div className="glass-card p-6 md:p-8">
+      <div className="glass-card p-4 md:p-8 overflow-hidden">
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm animate-fade-in flex items-start gap-3">
             <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,7 +214,7 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                     required
                     value={profile.bidang_id || ''}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none cursor-pointer truncate"
                   >
                     <option value="">— Pilih Bidang —</option>
                     {bidangList.map((b) => (
@@ -231,8 +231,8 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="min-w-0">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
                   <label htmlFor="tanggal_mulai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Tanggal Mulai Magang
                   </label>
@@ -243,10 +243,10 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                     required
                     value={profile.tanggal_mulai}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
-                <div className="min-w-0">
+                <div>
                   <label htmlFor="tanggal_selesai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Tanggal Selesai Magang
                   </label>
@@ -257,18 +257,18 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                     required
                     value={profile.tanggal_selesai}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full min-w-0 px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
               </div>
             </>
           )}
 
-          <div className="pt-2 flex justify-end">
+          <div className="pt-2 flex justify-stretch sm:justify-end">
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-3 rounded-xl bg-gradient-primary text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-primary text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

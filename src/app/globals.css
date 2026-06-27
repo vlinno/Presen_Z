@@ -84,6 +84,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -92,6 +93,7 @@ body {
   font-family: var(--font-inter, 'Inter', system-ui, -apple-system, sans-serif);
   -webkit-font-smoothing:  antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* ============================================
@@ -345,15 +347,5 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
-
-/* Prevent date and time inputs from overflowing on mobile Safari/WebKit */
-input[type="date"],
-input[type="time"],
-select {
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
 
 
