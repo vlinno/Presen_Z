@@ -1774,23 +1774,19 @@ export default function StrukturPage() {
         </div>
       </div>
 
-      {/* DETAIL DIALOG MODAL — bottom sheet on mobile */}
+      {/* DETAIL DIALOG MODAL — centered in viewport */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-[100] flex flex-col justify-end md:items-center md:justify-center bg-black/50 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="bg-white w-full md:max-w-lg md:rounded-2xl rounded-t-3xl shadow-2xl flex flex-col animate-slide-in-up max-h-[80vh]"
+            className="bg-white w-full max-w-sm rounded-2xl shadow-2xl flex flex-col animate-slide-in-up"
+            style={{ maxHeight: 'calc(100dvh - 2rem)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Swipe indicator pill (mobile only) */}
-            <div className="flex justify-center pt-3 pb-1 md:hidden">
-              <div className="w-10 h-1 rounded-full bg-neutral-300" />
-            </div>
-
             {/* Modal Header */}
-            <div className="px-5 pt-3 pb-4 md:pt-5 border-b border-neutral-100 flex items-start justify-between">
+            <div className="px-5 pt-5 pb-4 border-b border-neutral-100 flex items-start justify-between flex-shrink-0">
               <div className="flex-1 min-w-0 pr-3">
                 <span className="text-[10px] font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-full uppercase tracking-wider">
                   Detail Organisasi
@@ -1858,8 +1854,8 @@ export default function StrukturPage() {
               </div>
             </div>
 
-            {/* Footer — large close button, easy to tap */}
-            <div className="px-5 py-4 border-t border-neutral-100 bg-neutral-50/80">
+            {/* Footer — full-width close button */}
+            <div className="px-5 py-4 border-t border-neutral-100 bg-neutral-50/80 flex-shrink-0">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="w-full py-3 rounded-2xl bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-sm font-bold transition-colors"
