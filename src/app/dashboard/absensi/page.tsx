@@ -634,7 +634,30 @@ export default function AbsensiPage() {
 
   const isIzinToday = todayRecord?.keterangan === 'izin' || todayRecord?.keterangan === 'izin kampus'
   const showCheckOut = hasCheckedIn && !hasCheckedOut && !isIzinToday
-  const showLocationAndMap = !hasCheckedIn || showCheckOut
+
+  // Cek batas toleransi checkout untuk tampilan frontend (WITA Asia/Makassar)
+  const getIsCheckoutPastTolerance = () => {
+    try {
+      const witaString = currentTime.toLocaleString('en-US', { timeZone: 'Asia/Makassar' })
+      const witaDate = new Date(witaString)
+      const witaDay = witaDate.getDay() // 0 = Minggu, 1 = Senin, ..., 5 = Jumat, 6 = Sabtu
+      const witaHour = witaDate.getHours()
+      const witaMinute = witaDate.getMinutes()
+      const witaTimeInMinutes = witaHour * 60 + witaMinute
+
+      if (witaDay >= 1 && witaDay <= 4) {
+        return witaTimeInMinutes >= 1080 // 18:00
+      } else if (witaDay === 5) {
+        return witaTimeInMinutes >= 780 // 13:00
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    return false
+  }
+
+  const isCheckoutPastTolerance = getIsCheckoutPastTolerance()
+  const showLocationAndMap = !hasCheckedIn || (showCheckOut && !isCheckoutPastTolerance)
 
   const activeAnnouncements = announcements.filter((ann) => {
     const postedTime = new Date(ann.created_at).getTime()
@@ -1199,21 +1222,33 @@ export default function AbsensiPage() {
           <h3 className="text-base font-semibold text-neutral-800 mb-3">Check-Out</h3>
           <p className="text-sm text-neutral-500 mb-4">Klik tombol di bawah untuk mencatat jam pulang Anda.</p>
 
-          {/* Location warning for checkout */}
-          {!isLocationReady && location.status !== 'loading' && (
-            <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-start gap-2 animate-fade-in mb-4">
-              <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          {/* Checkout tolerance limit warning */}
+          {isCheckoutPastTolerance ? (
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2 animate-fade-in mb-4">
+              <svg className="w-4.5 h-4.5 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <span>
-                Anda harus berada di area <strong>{officeSettings.nama}</strong> untuk check-out. Klik tombol &quot;Perbarui Lokasi&quot; di atas.
+                Batas waktu toleransi check-out untuk hari ini telah berakhir (Senin–Kamis maksimal 18:00 WITA, Jumat maksimal 13:00 WITA). Anda sudah tidak dapat melakukan check-out.
               </span>
             </div>
+          ) : (
+            /* Location warning for checkout */
+            !isLocationReady && location.status !== 'loading' && (
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-start gap-2 animate-fade-in mb-4">
+                <svg className="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>
+                  Anda harus berada di area <strong>{officeSettings.nama}</strong> untuk check-out. Klik tombol &quot;Perbarui Lokasi&quot; di atas.
+                </span>
+              </div>
+            )
           )}
 
           <button
             onClick={handleCheckOut}
-            disabled={loading || !isLocationReady || todayHoliday.isHoliday}
+            disabled={loading || !isLocationReady || todayHoliday.isHoliday || isCheckoutPastTolerance}
             className="w-full py-3.5 px-4 rounded-xl bg-neutral-800 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:bg-neutral-900 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading ? (

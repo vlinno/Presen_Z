@@ -143,6 +143,24 @@ export async function checkOut(formData: FormData) {
     return { error: `Absensi tidak dapat dilakukan karena hari ini hari libur: ${holiday.keterangan}!` }
   }
 
+  // 3. Batas toleransi jam checkout (Senin-Kamis maks 18:00 WITA, Jumat maks 13:00 WITA)
+  const now = new Date()
+  const witaTime = new Date(now.getTime() + (8 * 60 * 60 * 1000))
+  const dayOfWeekWita = witaTime.getUTCDay()
+  const witaHour = witaTime.getUTCHours()
+  const witaMinute = witaTime.getUTCMinutes()
+  const witaTimeInMinutes = witaHour * 60 + witaMinute
+
+  if (dayOfWeekWita >= 1 && dayOfWeekWita <= 4) {
+    if (witaTimeInMinutes >= 1080) { // 18:00 WITA
+      return { error: 'Batas toleransi jam check-out Senin–Kamis (maksimal 18:00 WITA) telah berakhir!' }
+    }
+  } else if (dayOfWeekWita === 5) {
+    if (witaTimeInMinutes >= 780) { // 13:00 WITA
+      return { error: 'Batas toleransi jam check-out Jumat (maksimal 13:00 WITA) telah berakhir!' }
+    }
+  }
+
   const latitude = parseFloat(formData.get('latitude') as string)
   const longitude = parseFloat(formData.get('longitude') as string)
 
@@ -192,8 +210,6 @@ export async function checkOut(formData: FormData) {
     return { error: 'Anda sudah melakukan check-out hari ini!' }
   }
 
-  const now = new Date()
-  const witaTime = new Date(now.getTime() + (8 * 60 * 60 * 1000))
   const jamPulang = witaTime.toISOString().split('T')[1].substring(0, 8)
 
   const { error } = await supabase
