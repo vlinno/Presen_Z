@@ -363,22 +363,29 @@ export default function StrukturPage() {
     fetchData()
   }, [])
 
-  // Lock body scroll when modal is open
+  // Lock body scroll when modal is open (robust iOS Safari solution)
   useEffect(() => {
     if (isModalOpen || editType !== null || deleteConfirmStaf !== null) {
-      // Prevent scrolling on body for all devices including iOS
+      const scrollY = window.scrollY
+      document.body.style.position = 'fixed'
+      document.body.style.top = `-${scrollY}px`
+      document.body.style.width = '100%'
       document.body.style.overflow = 'hidden'
-      // Add touch-action none to root element to prevent pull-to-refresh and swipe
-      document.documentElement.style.overscrollBehavior = 'none'
     } else {
-      document.body.style.overflow = 'unset'
-      document.documentElement.style.overscrollBehavior = 'auto'
+      const scrollY = document.body.style.top
+      if (document.body.style.position === 'fixed') {
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+        document.body.style.overflow = ''
+        if (scrollY) {
+          window.scrollTo(0, parseInt(scrollY || '0') * -1)
+        }
+      }
     }
     
-    return () => {
-      document.body.style.overflow = 'unset'
-      document.documentElement.style.overscrollBehavior = 'auto'
-    }
+    // We intentionally do not restore on cleanup to avoid scroll jumps on hot reloads
+    // unless strictly necessary.
   }, [isModalOpen, editType, deleteConfirmStaf])
 
   // Action Click Handlers
