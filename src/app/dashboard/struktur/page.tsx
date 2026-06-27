@@ -366,12 +366,18 @@ export default function StrukturPage() {
   // Lock body scroll when modal is open
   useEffect(() => {
     if (isModalOpen || editType !== null || deleteConfirmStaf !== null) {
+      // Prevent scrolling on body for all devices including iOS
       document.body.style.overflow = 'hidden'
+      // Add touch-action none to root element to prevent pull-to-refresh and swipe
+      document.documentElement.style.overscrollBehavior = 'none'
     } else {
       document.body.style.overflow = 'unset'
+      document.documentElement.style.overscrollBehavior = 'auto'
     }
+    
     return () => {
       document.body.style.overflow = 'unset'
+      document.documentElement.style.overscrollBehavior = 'auto'
     }
   }, [isModalOpen, editType, deleteConfirmStaf])
 
@@ -1792,11 +1798,12 @@ export default function StrukturPage() {
       {isModalOpen && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
+          style={{ touchAction: 'none' }}
           onClick={() => setIsModalOpen(false)}
         >
           <div
             className="bg-white w-full max-w-sm rounded-2xl shadow-2xl flex flex-col animate-slide-in-up"
-            style={{ maxHeight: 'calc(100dvh - 2rem)' }}
+            style={{ maxHeight: 'calc(100dvh - 2rem)', touchAction: 'auto' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -1824,7 +1831,7 @@ export default function StrukturPage() {
             </div>
 
             {/* Scrollable content */}
-            <div className="overflow-y-auto flex-1">
+            <div className="overflow-y-auto flex-1 overscroll-contain">
               {/* Description */}
               <div className="px-5 py-4 border-b border-neutral-100">
                 <h3 className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5">
@@ -1884,8 +1891,14 @@ export default function StrukturPage() {
 
       {/* EDIT MODAL DIALOG */}
       {editType && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-slide-in-up">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
+          style={{ touchAction: 'none' }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative animate-slide-in-up max-h-[90dvh] overflow-y-auto overscroll-contain"
+            style={{ touchAction: 'auto' }}
+          >
             <h3 className="text-lg font-bold text-neutral-900 mb-4">
               {editingId ? 'Edit Elemen Struktur' : 'Tambah Staf Baru'}
             </h3>
@@ -2028,8 +2041,14 @@ export default function StrukturPage() {
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmStaf && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 relative animate-slide-in-up">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in"
+          style={{ touchAction: 'none' }}
+        >
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 relative animate-slide-in-up"
+            style={{ touchAction: 'auto' }}
+          >
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
                 <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
