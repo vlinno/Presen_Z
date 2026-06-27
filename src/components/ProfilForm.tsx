@@ -232,7 +232,7 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+                <div className="min-w-0">
                   <label htmlFor="tanggal_mulai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Tanggal Mulai Magang
                   </label>
@@ -243,10 +243,10 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                     required
                     value={profile.tanggal_mulai}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label htmlFor="tanggal_selesai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Tanggal Selesai Magang
                   </label>
@@ -257,7 +257,7 @@ export default function ProfilForm({ initialProfile, bidangList }: ProfilFormPro
                     required
                     value={profile.tanggal_selesai}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
                 </div>
               </div>

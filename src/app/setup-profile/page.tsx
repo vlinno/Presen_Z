@@ -124,7 +124,7 @@ export default function SetupProfilePage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="min-w-0">
                 <label htmlFor="tanggal_mulai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Mulai Magang
                 </label>
@@ -133,10 +133,10 @@ export default function SetupProfilePage() {
                   name="tanggal_mulai"
                   type="date"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
-              <div>
+              <div className="min-w-0">
                 <label htmlFor="tanggal_selesai" className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Selesai Magang
                 </label>
@@ -145,7 +145,7 @@ export default function SetupProfilePage() {
                   name="tanggal_selesai"
                   type="date"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full min-w-0 max-w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
             </div>

@@ -346,4 +346,13 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
+/* Fix input[type="date"] overflow in Safari/iOS */
+input[type="date"] {
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
 
