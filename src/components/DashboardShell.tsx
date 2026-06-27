@@ -250,7 +250,7 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
       <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
 
         {/* Top bar — mobile */}
-        <header className="lg:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white"
+        <header className="lg:hidden fixed top-0 inset-x-0 z-30 flex items-center gap-3 px-4 py-3 bg-white"
           style={{ borderBottom: '1px solid #e2e8f0' }}>
           <button
             id="sidebar-toggle"
@@ -273,7 +273,7 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8">
+        <main className="flex-1 p-4 md:p-6 lg:p-8 pt-[72px] lg:pt-8">
           {children}
         </main>
 
