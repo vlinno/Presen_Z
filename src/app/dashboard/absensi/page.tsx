@@ -1079,7 +1079,7 @@ export default function AbsensiPage() {
                 {[
                   { value: 'hadir', label: 'Hadir', emoji: '✅' },
                   { value: 'izin', label: 'Izin', emoji: '📋' },
-                  { value: 'izin kampus', label: 'Izin Kampus/Sekolah', emoji: '🏫' },
+                  { value: 'izin kampus', label: 'Izin Kampus / Sekolah', emoji: '🏫' },
                 ].map((opt) => (
                   <button
                     key={opt.value}
@@ -1088,14 +1088,14 @@ export default function AbsensiPage() {
                       setStatus(opt.value)
                       if (opt.value !== 'izin') setAlasanIzin('')
                     }}
-                    className={`p-4 rounded-xl border-2 text-center transition-all duration-200 hover:-translate-y-0.5 ${
+                    className={`p-2.5 md:p-4 rounded-xl border-2 text-center transition-all duration-200 hover:-translate-y-0.5 flex flex-col items-center justify-center min-h-[90px] md:min-h-0 ${
                       status === opt.value
                         ? 'border-primary-500 bg-primary-50 shadow-md'
                         : 'border-neutral-200 bg-white hover:border-neutral-300'
                     }`}
                   >
                     <span className="text-2xl block mb-1">{opt.emoji}</span>
-                    <span className={`text-sm font-medium ${
+                    <span className={`text-xs md:text-sm font-medium block leading-tight break-words ${
                       status === opt.value ? 'text-primary-700' : 'text-neutral-600'
                     }`}>
                       {opt.label}
