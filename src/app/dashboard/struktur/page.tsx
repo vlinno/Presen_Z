@@ -363,6 +363,18 @@ export default function StrukturPage() {
     fetchData()
   }, [])
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen || editType !== null || deleteConfirmStaf !== null) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isModalOpen, editType, deleteConfirmStaf])
+
   // Action Click Handlers
   const handleEditPimpinanClick = (p: Pimpinan) => {
     setEditType('pimpinan')
