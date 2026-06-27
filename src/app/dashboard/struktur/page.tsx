@@ -617,6 +617,7 @@ export default function StrukturPage() {
   }
 
   return (
+    <>
     <div className="max-w-7xl mx-auto px-4 py-6 animate-fade-in pb-16">
       {/* Header Banner */}
       <div className="text-center mb-10 relative">
@@ -1785,6 +1786,7 @@ export default function StrukturPage() {
           )}
         </div>
       </div>
+    </div>
 
       {/* DETAIL DIALOG MODAL — centered in viewport */}
       {isModalOpen && (
@@ -2071,6 +2073,6 @@ export default function StrukturPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
