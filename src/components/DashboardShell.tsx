@@ -119,8 +119,13 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
     setIsLoggingOut(true)
     const supabase = createClient()
     await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
+    
+    // Gunakan window.location.href untuk memastikan state benar-benar bersih dan hard reload
+    if (role === 'admin') {
+      window.location.href = '/admin/login'
+    } else {
+      window.location.href = '/login'
+    }
   }
 
   const navItems = role === 'admin' ? adminNavItems : studentNavItems
