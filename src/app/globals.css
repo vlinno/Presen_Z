@@ -346,11 +346,12 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
-/* Fix input[type="date"] overflow in Safari/iOS */
-input[type="date"] {
-  max-width: 100%;
+/* Prevent date and time inputs from overflowing on mobile Safari/WebKit */
+input[type="date"],
+input[type="time"],
+select {
   min-width: 0;
-  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
 }
 
