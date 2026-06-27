@@ -117,13 +117,12 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    
-    // Gunakan window.location.href untuk memastikan state benar-benar bersih dan hard reload
-    if (role === 'admin') {
-      window.location.href = '/admin/login'
-    } else {
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch (e) {
+      console.error(e)
+    } finally {
       window.location.href = '/login'
     }
   }
