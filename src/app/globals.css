@@ -339,3 +339,11 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 8px 24px rgba(79,70,229,0.12);
   transform:  translateY(-2px);
 }
+
+/* Hide default Edge and IE password reveal/clear buttons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+
