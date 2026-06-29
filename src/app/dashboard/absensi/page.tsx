@@ -65,6 +65,8 @@ function calculateDistanceClient(
 export default function AbsensiPage() {
   const [status, setStatus] = useState<string>('hadir')
   const [alasanIzin, setAlasanIzin] = useState('')
+  const [tanggalMulai, setTanggalMulai] = useState('')
+  const [tanggalSelesai, setTanggalSelesai] = useState('')
   const [todayRecord, setTodayRecord] = useState<TodayRecord | null>(null)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -433,6 +435,9 @@ export default function AbsensiPage() {
 
   useEffect(() => {
     setMounted(true)
+    const todayStr = new Date().toISOString().split('T')[0]
+    setTanggalMulai(todayStr)
+    setTanggalSelesai(todayStr)
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('last_read_announcement_id')
       setLastReadAnnId(saved)
@@ -575,6 +580,8 @@ export default function AbsensiPage() {
     formData.set('keterangan', status)
     if (status !== 'hadir') {
       formData.set('alasan_izin', alasanIzin)
+      formData.set('tanggal_mulai', tanggalMulai)
+      formData.set('tanggal_selesai', tanggalSelesai)
       if (uploadUrl) {
         formData.set('bukti_izin_url', uploadUrl)
       }
@@ -587,7 +594,21 @@ export default function AbsensiPage() {
     if (result.error) {
       setMessage({ type: 'error', text: result.error })
     } else {
-      setMessage({ type: 'success', text: 'Check-in berhasil!' })
+      if (status === 'izin' || status === 'izin kampus') {
+        const tglMulaiFmt = new Date(tanggalMulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+        const tglSelesaiFmt = new Date(tanggalSelesai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+        setMessage({ 
+          type: 'success', 
+          text: `✅ Pengajuan izin dari tanggal ${tglMulaiFmt} sampai ${tglSelesaiFmt} berhasil disimpan!` 
+        })
+        setAlasanIzin('')
+        const todayStr = new Date().toISOString().split('T')[0]
+        setTanggalMulai(todayStr)
+        setTanggalSelesai(todayStr)
+        setStatus('hadir')
+      } else {
+        setMessage({ type: 'success', text: '✅ Check-in berhasil!' })
+      }
       await fetchToday()
       await fetchStats()
       await fetchCalendarData(calendarYear, calendarMonth)
@@ -1108,6 +1129,41 @@ export default function AbsensiPage() {
             {/* Alasan Izin (conditional) */}
             {(status === 'izin' || status === 'izin kampus') && (
               <div className="animate-fade-in space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="tanggal_mulai" className="block text-sm font-medium text-neutral-700 mb-1.5">
+                      Dari Tanggal <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="tanggal_mulai"
+                      value={tanggalMulai}
+                      onChange={(e) => {
+                        setTanggalMulai(e.target.value)
+                        if (e.target.value > tanggalSelesai) {
+                          setTanggalSelesai(e.target.value)
+                        }
+                      }}
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="tanggal_selesai" className="block text-sm font-medium text-neutral-700 mb-1.5">
+                      Sampai Tanggal <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="tanggal_selesai"
+                      min={tanggalMulai}
+                      value={tanggalSelesai}
+                      onChange={(e) => setTanggalSelesai(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                      required
+                    />
+                  </div>
+                </div>
+
                 {status === 'izin' && (
                   <div>
                     <label htmlFor="alasan_izin" className="block text-sm font-medium text-neutral-700 mb-1.5">

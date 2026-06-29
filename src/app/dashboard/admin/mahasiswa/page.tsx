@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { createClient } from '@/lib/supabase/client'
 import ExcelJS from 'exceljs'
-import { adminUpdateAttendance, adminDeleteAttendance, adminAddAttendance } from '@/app/actions/attendance'
+import { adminUpdateAttendance, adminDeleteAttendance, adminAddAttendance, adminDeleteAttendanceBulk } from '@/app/actions/attendance'
 import { deleteStudentsBulk } from '@/app/actions/profile'
 
 interface Student {
@@ -66,6 +66,8 @@ export default function MahasiswaPage() {
   const [loadingRecords, setLoadingRecords] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
+  const [selectedRecordIds, setSelectedRecordIds] = useState<number[]>([])
+  const [deletingRecords, setDeletingRecords] = useState(false)
 
   // Add/Edit State
   const [isEditing, setIsEditing] = useState<AttendanceRecord | null>(null)
@@ -128,6 +130,7 @@ export default function MahasiswaPage() {
     setRecords([])
     setErrorMsg(null)
     setSuccessMsg(null)
+    setSelectedRecordIds([])
   }
 
   const handleStartAdd = () => {
@@ -197,6 +200,42 @@ export default function MahasiswaPage() {
       }
       setTimeout(() => setSuccessMsg(null), 3000)
     }
+  }
+
+  const handleDeleteSelectedRecords = async () => {
+    if (selectedRecordIds.length === 0) return
+    if (!confirm(`Apakah Anda yakin ingin menghapus ${selectedRecordIds.length} data absensi yang dipilih?`)) return
+    
+    setErrorMsg(null)
+    setSuccessMsg(null)
+    setDeletingRecords(true)
+
+    const result = await adminDeleteAttendanceBulk(selectedRecordIds)
+    if (result.error) {
+      setErrorMsg(result.error)
+    } else {
+      setSuccessMsg(`${selectedRecordIds.length} data absensi berhasil dihapus.`)
+      setSelectedRecordIds([])
+      if (selectedStudent) {
+        fetchAttendanceRecords(selectedStudent.id)
+      }
+      setTimeout(() => setSuccessMsg(null), 3000)
+    }
+    setDeletingRecords(false)
+  }
+
+  const handleSelectAllRecords = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setSelectedRecordIds(records.map(r => r.id))
+    } else {
+      setSelectedRecordIds([])
+    }
+  }
+
+  const toggleSelectRecord = (id: number) => {
+    setSelectedRecordIds(prev => 
+      prev.includes(id) ? prev.filter(recId => recId !== id) : [...prev, id]
+    )
   }
 
   const formatDate = (dateStr: string) => {
@@ -1224,6 +1263,30 @@ export default function MahasiswaPage() {
                     </h3>
                     
                     <div className="flex flex-wrap gap-2">
+                      {selectedRecordIds.length > 0 && (
+                        <button
+                          onClick={handleDeleteSelectedRecords}
+                          disabled={deletingRecords}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition-colors shadow-sm disabled:opacity-50"
+                        >
+                          {deletingRecords ? (
+                            <>
+                              <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                              Menghapus...
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Hapus Terpilih ({selectedRecordIds.length})
+                            </>
+                          )}
+                        </button>
+                      )}
                       {!isAdding && !isEditing && (
                         <button
                           onClick={handleStartAdd}
@@ -1265,6 +1328,14 @@ export default function MahasiswaPage() {
                       <table className="w-full text-left border-collapse min-w-[700px]">
                         <thead>
                           <tr className="bg-neutral-50 border-b border-neutral-200">
+                            <th className="px-4 py-3 text-center w-12">
+                              <input
+                                type="checkbox"
+                                checked={records.length > 0 && selectedRecordIds.length === records.length}
+                                onChange={handleSelectAllRecords}
+                                className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                              />
+                            </th>
                             <th className="px-4 py-3 text-xs font-bold text-neutral-600 uppercase w-12 text-center">No</th>
                             <th className="px-4 py-3 text-xs font-bold text-neutral-600 uppercase">Hari / Tanggal</th>
                             <th className="px-4 py-3 text-xs font-bold text-neutral-600 uppercase text-center">Jam Masuk</th>
@@ -1276,6 +1347,14 @@ export default function MahasiswaPage() {
                         <tbody className="divide-y divide-neutral-100">
                           {records.map((record, idx) => (
                             <tr key={record.id} className="hover:bg-neutral-50/40 text-sm">
+                              <td className="px-4 py-3 text-center">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedRecordIds.includes(record.id)}
+                                  onChange={() => toggleSelectRecord(record.id)}
+                                  className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                                />
+                              </td>
                               <td className="px-4 py-3 text-center text-neutral-500">{idx + 1}</td>
                               <td className="px-4 py-3 font-medium text-neutral-800">{formatDate(record.tanggal)}</td>
                               <td className="px-4 py-3 text-center tabular-nums text-neutral-600">{formatTime(record.jam_masuk)}</td>
