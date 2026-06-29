@@ -161,9 +161,11 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
           {/* Background image & overlay */}
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100 transition-transform duration-700 hover:scale-105" 
-            style={{ backgroundImage: "url('/bg-balaikota.png')" }}
+            style={{ backgroundImage: "url('/bg-balaikota-malam.jpg')" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+          {/* Overlay gradien khusus foto malam agar terlihat premium dan teks tetap terbaca jelas */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/60 to-transparent mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
           
           <div className="relative z-10 flex items-center gap-3">
             <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-xl shadow-lg">
@@ -177,7 +179,7 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
             </div>
             <div>
               <span className="text-lg font-extrabold tracking-tight text-white drop-shadow-md">
-                Presen<span className="text-cyan-300">Z</span>
+                Presen<span style={{ color: '#4f46e5' }}>Z</span>
               </span>
               <p className="text-[11px] font-medium text-gray-200 -mt-0.5 drop-shadow-md">
                 {role === 'admin' ? 'Panel Admin' : 'Portal Magang'}
