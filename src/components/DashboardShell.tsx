@@ -156,30 +156,30 @@ export default function DashboardShell({ role, namaLengkap, namaKampus, children
         style={{ borderRight: '1px solid #e2e8f0' }}
       >
         {/* Logo */}
-        <div className="px-5 py-6 relative overflow-hidden bg-slate-900" style={{ borderBottom: '1px solid #1e293b' }}>
+        {/* Logo */}
+        <div className="px-5 py-6 relative overflow-hidden" style={{ borderBottom: '1px solid #1e293b' }}>
           {/* Background image & overlay */}
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 transition-transform duration-700 hover:scale-105" 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-100 transition-transform duration-700 hover:scale-105" 
             style={{ backgroundImage: "url('/bg-balaikota.png')" }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
           
           <div className="relative z-10 flex items-center gap-3">
-            <div className="p-1.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-xl">
+            <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-xl shadow-lg">
               <Image
                 src="/logo-kesbangpol.png"
                 alt="Logo Kesbangpol"
                 width={36}
                 height={36}
-                className="object-contain drop-shadow-md"
+                className="object-contain"
               />
             </div>
             <div>
               <span className="text-lg font-extrabold tracking-tight text-white drop-shadow-md">
-                Presen<span className="text-cyan-400">Z</span>
+                Presen<span className="text-cyan-300">Z</span>
               </span>
-              <p className="text-[11px] font-medium text-slate-300 -mt-0.5 drop-shadow-md">
+              <p className="text-[11px] font-medium text-gray-200 -mt-0.5 drop-shadow-md">
                 {role === 'admin' ? 'Panel Admin' : 'Portal Magang'}
               </p>
             </div>
